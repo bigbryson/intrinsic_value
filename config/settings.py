@@ -41,9 +41,18 @@ if not SECRET_KEY:
 DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
 
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
 
+# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "0b155f6ecc2e.ngrok-free.app"]
+
+# Add your ngrok URL to CSRF_TRUSTED_ORIGINS
+CSRF_TRUSTED_ORIGINS = ['https://0b155f6ecc2e.ngrok-free.app']
+
+# Automatic ngrok URL configuration for development
+# These settings tell Django to trust the X-Forwarded-Proto header from ngrok
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = False # Recommended to be False for development
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Current DJANGO_ENVIRONMENT
 ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT", default="local")
 
@@ -73,6 +82,9 @@ INSTALLED_APPS = [
     "apps.holdings",
     "apps.transactions",
     "apps.financials",
+    "django_extensions",
+    "django_ngrok",
+    "widget_tweaks",
 
 ]
 
@@ -90,9 +102,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
+        # Add the line below to tell Django where to find the 'layouts' folder
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -103,6 +118,8 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "config.context_processors.my_setting",
                 "config.context_processors.environment",
+                "config.context_processors.layout_path",
+
             ],
             "libraries": {
                 "theme": "web_project.template_tags.theme",
@@ -110,6 +127,7 @@ TEMPLATES = [
             "builtins": [
                 "django.templatetags.static",
                 "web_project.template_tags.theme",
+                "django.templatetags.i18n",
             ],
         },
     },
@@ -189,4 +207,42 @@ THEME_VARIABLES = THEME_VARIABLES
 
 
 # Your stuff...
+
+DOLT_EARNINGS_DATA_PATH = r'E:\Stock History' # From your stock_data_gui.py
+
+DOLTHUB_FILENAMES_CONFIG = { # From your stock_data_gui.py
+    "assets": "balance_sheet_assets.csv",
+    "equity": "balance_sheet_equity.csv",
+    "liabilities": "balance_sheet_liabilities.csv",
+    "cash_flow": "cash_flow_statement.csv",
+    "eps_history": "eps_history.csv",
+    "income_statement": "income_statement.csv",
+    # Add other filenames if they become necessary for calculations
+}
+CURRENT_AAA_BOND_YIELD = 4.5
+ANNUAL_REPORT_PERIOD_INDICATOR = 'Year'
+
+# Path to the file containing all tickers (if still used in this manner)
+ALL_TICKERS_FILE_PATH = os.path.join(DOLT_EARNINGS_DATA_PATH, "all_tickers.txt")
+
+# For yfinance, no specific API keys are usually needed, but good to note
+# YFINANCE_SETTINGS = {}
+
+# ------------------------------------------------------------------------------
+# config/settings.py
+FINNHUB_API_KEY = 'd1631g9r01qhsocmdas0d1631g9r01qhsocmdasg'
+# Webhook
+URL_WEBHOOK_SECRET = 'd1631g9r01qhsocmdatg'
+
+# E*TRADE API Credentials
+ETRADE_CONSUMER_KEY='af085ade91855a0c03acb7a314bc84b7' #your_etrade_api_key''
+ETRADE_CONSUMER_SECRET='80e7b374c7d5eb95d880a34f0e2b44c432748e8c6eab83eb87297fa37ef4c7db' #your_etrade_secret_key''
+
+# Charles Schwab API Credentials
+SCHWAB_APP_KEY='M1nYoqHUuH8MprFfDM1VlMp22jrbCnAT'
+
+SCHWAB_APP_SECRET='uCBaAkaGQSBWSsCS'
+
+LOGIN_URL = '/accounts/auth/login/'
+
 # ------------------------------------------------------------------------------

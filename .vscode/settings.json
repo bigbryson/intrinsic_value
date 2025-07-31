@@ -19,7 +19,8 @@
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit"
     },
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "diffEditor.ignoreTrimWhitespace": true
   },
   // "python.analysis.autoImportCompletions": true,
   // "python.formatting.provider": "black",

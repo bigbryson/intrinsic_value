@@ -1,18 +1,32 @@
+# /apps/dashboards/views.py
+from django.shortcuts import render
 from django.views.generic import TemplateView
-from web_project import TemplateLayout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
-"""
-This file is a view controller for multiple pages as a module.
-Here you can override the page view layout.
-Refer to dashboards/urls.py file for more pages.
-"""
+# Add LoginRequiredMixin to the view
+@login_required
+def connection_page(request):
+    """
+    Renders the page that allows users to connect to their
+    Schwab or E*TRADE accounts.
+    """
+    # We will use this exact path and filename
+    return render(request, 'dashboards/connection_page.html')
+class DashboardsView(LoginRequiredMixin, TemplateView):
+    # This tells the mixin where to redirect users if they are NOT logged in
+    login_url = '/accounts/auth/login/'
 
-
-class DashboardsView(TemplateView):
-    # Predefined function
     def get_context_data(self, **kwargs):
-        # A function to init the global layout. It is defined in web_project/__init__.py file
-        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        context = super().get_context_data(**kwargs)
+        # You can add any extra context data for your template here
+        # For example, let's pass the app name
+        context['page_title'] = "Portfolio Dashboard"
+        context.update({"is_menu": True})
 
+        # Check the session to see if a connection has been made
+        # If not, set a flag to show the modal.
+        if not self.request.session.get('has_brokerage_connection', False):
+            context['show_connection_modal'] = True
         return context

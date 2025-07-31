@@ -25,6 +25,14 @@ urlpatterns = [
     # Dashboard urls
     path("", include("apps.dashboards.urls")),
 
+    path('accounts/', include(('apps.authentication.urls', 'authentication'))),
+
+    path('', include('apps.dashboards.urls')),
+    #holdings url
+    path('holdings/', include(('apps.holdings.urls', 'holdings'))), # Add this line
+
+    #api login page
+    path('api/', include(('apps.connection_page.urls', 'connection_page'))),
     # layouts urls
     path("", include("apps.layouts.urls")),
 

@@ -1,0 +1,23 @@
+{% extends "layout/layout_blank.html" %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+<div class="container-xxl container-p-y">
+  <div class="misc-wrapper">
+    <h2 class="mb-2 mx-2">An Error Occurred</h2>
+    <p class="mb-4 mx-2">
+        We encountered a problem processing your request.
+    </p>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+    <a href="{% url 'index' %}" class="btn btn-primary">Back to home</a>
+    <div class="mt-4">
+      <img src="{% static 'img/illustrations/page-misc-error-light.png' %}" alt="page-misc-error-light" width="500" class="img-fluid">
+    </div>
+  </div>
+</div>
+{% endblock content %}
