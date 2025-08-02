@@ -1,0 +1,130 @@
+{% extends "layout/layout_vertical.html" %}
+{% load holdings_extras %}
+{% load static %}
+
+{% block title %}My Holdings{% endblock title %}
+
+{% block content %}
+<div class="card">
+  <h5 class="card-header">My Portfolio Holdings</h5>
+
+  {% if error_message %}
+    <div class="alert alert-danger m-4" role="alert">
+      {{ error_message }}
+    </div>
+  {% endif %}
+
+  <div class="table-responsive text-nowrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Description</th>
+          <th>Qty</th>
+          <th>Avg Price</th>
+          <th>Current Price</th>
+          <th>Day Change %</th>
+          <th>% Account</th>
+          <th>Mkt Value</th>
+          <th>Cost Basis</th>
+          <th>Total Gain/Loss</th>
+          <th>Total Gain %</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        {% for position in holdings %}
+   
+            <td><strong>{{ position.instrument.symbol }}</strong></td>
+            <td>{{ position.instrument.description|default:position.instrument.symbol }}</td>
+            <td>{{ position.longQuantity|floatformat:2 }}</td>
+            <td>${{ position.averagePrice|floatformat:2 }}</td>
+            <td>${{ position.marketValue|div:position.longQuantity|floatformat:2 }}</td>
+            <td>
+              {% if position.currentDayProfitLossPercentage > 0 %}
+                <span class="text-success">+{{ position.currentDayProfitLossPercentage|floatformat:2 }}%</span>
+              {% else %}
+                <span class="text-danger">{{ position.currentDayProfitLossPercentage|floatformat:2 }}%</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if total_market_value > 0 %}
+                {{ position.marketValue|div:total_market_value|mul:100|floatformat:2 }}%
+              {% else %}
+                --
+              {% endif %}
+            </td>
+            <td>${{ position.marketValue|floatformat:2 }}</td>
+            <td>${{ position.averagePrice|mul:position.longQuantity|floatformat:2 }}</td>
+                        {#Do not forget this below!!!!!!!!!!!!! #}
+            <td>
+              {# Corrected calculation for Total Gain/Loss #}
+              {% with cost_basis=position.averagePrice|mul:position.longQuantity %}
+                {% with total_gain_loss=position.marketValue|sub:cost_basis %}
+                  {% if total_gain_loss > 0 %}
+                    <span class="text-success">+${{ total_gain_loss|floatformat:2 }}</span>
+                  {% else %}
+                    <span class="text-danger">${{ total_gain_loss|floatformat:2 }}</span>
+                  {% endif %}
+                {% endwith %}
+              {% endwith %}
+            </td>
+
+            <td>
+              {% with cost_basis=position.averagePrice|mul:position.longQuantity %}
+                {% if cost_basis > 0 %}
+                  {% with total_gain_loss=position.marketValue|sub:cost_basis %}
+                    {% with total_gain_percent=total_gain_loss|div:cost_basis|mul:100 %}
+                      {% if total_gain_percent > 0 %}
+                        <span class="text-success">+{{ total_gain_percent|floatformat:2 }}%</span>
+                      {% else %}
+                        <span class="text-danger">{{ total_gain_percent|floatformat:2 }}%</span>
+                      {% endif %}
+                    {% endwith %}
+                  {% endwith %}
+                {% else %}
+                  --
+                {% endif %}
+              {% endwith %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="11" class="text-center">No holdings data was found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      {#  New Summary Footer #}
+      <tfoot class="table-border-bottom-0">
+        <tr class="table-light">
+          <td colspan="6"><strong>Portfolio Totals</strong></td>
+          <td><strong>100.00%</strong></td>
+          <td><strong>${{ total_market_value|floatformat:2 }}</strong></td>
+          <td><strong>${{ total_cost_basis|floatformat:2 }}</strong></td>
+          <td>
+            {% with overall_gain_loss=total_market_value|sub:total_cost_basis %}
+              {% if overall_gain_loss > 0 %}
+                <strong class="text-success">+${{ overall_gain_loss|floatformat:2 }}</strong>
+              {% else %}
+                <strong class="text-danger">${{ overall_gain_loss|floatformat:2 }}</strong>
+              {% endif %}
+            {% endwith %}
+          </td>
+          <td>
+            {% if total_cost_basis > 0 %}
+              {% with overall_gain_percent=total_market_value|sub:total_cost_basis|div:total_cost_basis|mul:100 %}
+                {% if overall_gain_percent > 0 %}
+                  <strong class="text-success">+{{ overall_gain_percent|floatformat:2 }}%</strong>
+                {% else %}
+                  <strong class="text-danger">{{ overall_gain_percent|floatformat:2 }}%</strong>
+                {% endif %}
+              {% endwith %}
+            {% else %}
+              <strong>--</strong>
+            {% endif %}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+{% endblock content %}

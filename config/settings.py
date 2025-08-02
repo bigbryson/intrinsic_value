@@ -43,10 +43,10 @@ DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
 
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "0b155f6ecc2e.ngrok-free.app"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "2259d2ffd525.ngrok-free.app"]
 
 # Add your ngrok URL to CSRF_TRUSTED_ORIGINS
-CSRF_TRUSTED_ORIGINS = ['https://0b155f6ecc2e.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://2259d2ffd525.ngrok-free.app']
 
 # Automatic ngrok URL configuration for development
 # These settings tell Django to trust the X-Forwarded-Proto header from ngrok
@@ -244,5 +244,18 @@ SCHWAB_APP_KEY='M1nYoqHUuH8MprFfDM1VlMp22jrbCnAT'
 SCHWAB_APP_SECRET='uCBaAkaGQSBWSsCS'
 
 LOGIN_URL = '/accounts/auth/login/'
+
+#Sandbox Authentication
+
+# Yodlee API Credentials
+# /config/settings.py
+
+# ... other settings ...
+
+# Yodlee API Credentials
+YODLEE_ADMINLOGINNAME = os.environ.get("YODLEE_ADMINLOGINNAME")
+YODLEE_CLIENT_ID = os.environ.get("YODLEE_CLIENT_ID")
+YODLEE_SECRET = os.environ.get("YODLEE_SECRET")
+YODLEE_API_URL = "https://sandbox.api.yodlee.com/ysl" # Sandbox URL
 
 # ------------------------------------------------------------------------------

@@ -1,321 +1,105 @@
 {% extends "layout/layout_vertical.html" %}
-
 {% load static %}
-{% load i18n %}
 
-{% block title %}Portfolio Dashboard{% endblock title %}
-
-{% block vendor_css %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'vendor/libs/apex-charts/apex-charts.css' %}" />
-{% endblock vendor_css %}
+{% block title %}Dashboard{% endblock title %}
 
 {% block content %}
+
+{# This block will only show if the user has NOT connected an account #}
+{% if show_connection_modal %}
 <div class="card mb-4">
-  <div class="card-body">
-    <h4 class="card-title">Welcome back, {{ user.username }}!</h4>
-    <p class="card-text">You have successfully logged in. This is your main dashboard.</p>
-    <a href="{% url 'authentication:auth-logout-basic' %}" class="btn btn-danger">Logout</a>
+  <div class="card-body text-center">
+    <h4 class="card-title">Welcome to Your Portfolio!</h4>
+    <p class="card-text">To see your holdings and transactions, please connect your financial accounts.</p>
+
+    {# This button will launch the Yodlee FastLink UI #}
+    <button id="connect-account-btn" class="btn btn-primary">
+      Connect an Account
+    </button>
   </div>
 </div>
+{# This is the container that Yodlee's script will use to render its UI #}
+<div id="fastlink-container"></div>
+{% endif %}
+
+
 <div class="row gy-6">
-  <div class="col-12">
+  {# This is the main content of your dashboard, which will be more useful #}
+  {# once the user has connected their accounts. #}
+  <div class="col-md-12">
     <div class="card">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="card-title m-0 me-2">Chart Overview</h5>
-        <div class="dropdown">
-          <button class="btn btn-text-secondary rounded-pill btn-icon" type="button" id="portfolioChartDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ri-more-2-line ri-24px"></i>
-          </button>
-          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="portfolioChartDropdown">
-            <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-            <a class="dropdown-item" href="javascript:void(0);">Share</a>
-          </div>
-        </div>
+      <div class="card-header">
+        <h5 class="card-title m-0 me-2">Portfolio Overview</h5>
+      </div>
+      <div class="card-body">
+        <p>Your portfolio data will appear here once you connect an account.</p>
       </div>
     </div>
   </div>
-<div class="row gy-6">
-  <!-- Main Overview Card -->
-  <div class="col-12">
-      <div class="card">
-          <div class="card-header">
-              <h5 class="card-title m-0">Portfolio Overview</h5>
-          </div>
-          <div class="card-body">
-              <div class="row g-6">
-                  <!-- Left Side: Charts -->
-                  <div class="col-md-7">
-                      <div class="row g-6">
-                          <!-- Invested Overview Chart -->
-                          <div class="col-12">
-                              <div class="card">
-                                  <div class="card-header">
-                                      <h6 class="m-0">Invested</h6>
-                                  </div>
-                                  <div class="card-body">
-                                      <div id="invested-overview-chart"></div>
-                                  </div>
-                              </div>
-                          </div>
-                          <!-- Dividends Overview Chart -->
-                          <div class="col-12">
-                              <div class="card">
-                                  <div class="card-header">
-                                      <h6 class="m-0">Dividends</h6>
-                                  </div>
-                                  <div class="card-body">
-                                      <div id="dividends-overview-chart"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
+</div>
+{% endblock content %}
 
-                  <!-- Right Side: Key Metrics -->
-                  <div class="col-md-5">
-                      <div class="row g-6">
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <div class="avatar mx-auto mb-2">
-                                          <div class="avatar-initial bg-primary rounded-circle shadow-xs">
-                                              <i class="ri-wallet-3-line ri-24px"></i>
-                                          </div>
-                                      </div>
-                                      <h6 class="mb-1">Invested</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <div class="avatar mx-auto mb-2">
-                                          <div class="avatar-initial bg-success rounded-circle shadow-xs">
-                                              <i class="ri-funds-line ri-24px"></i>
-                                          </div>
-                                      </div>
-                                      <h6 class="mb-1">Market Value</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <div class="avatar mx-auto mb-2">
-                                          <div class="avatar-initial bg-info rounded-circle shadow-xs">
-                                              <i class="ri-safe-2-line ri-24px"></i>
-                                          </div>
-                                      </div>
-                                      <h6 class="mb-1">Free Cash</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <div class="avatar mx-auto mb-2">
-                                          <div class="avatar-initial bg-dark rounded-circle shadow-xs">
-                                              <i class="ri-numbers-line ri-24px"></i>
-                                          </div>
-                                      </div>
-                                      <h6 class="mb-1">Portfolio Value</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <h6 class="mb-1">Dividends</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <h6 class="mb-1">Yield %</h6>
-                                      <h5 class="mb-0">%%</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <h6 class="mb-1">Gain/Loss %</h6>
-                                      <h5 class="mb-0">%%</h5>
-                                  </div>
-                              </div>
-                          </div>
-                           <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <h6 class="mb-1">Monthly Return %</h6>
-                                      <h5 class="mb-0">%%</h5>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-  <!--/ Main Overview Card -->
-
-
-  <!-- All Areas of stocks & Transactions Card -->
-  <div class="col-12">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title m-0">All Transactions</h5>
-        </div>
-        <div class="card-body">
-            <div class="row g-6">
-                <!-- Donut Chart -->
-                <div class="col-md-5 d-flex align-items-center">
-                    <div id="all-holdings-donut-chart" class="w-100"></div>
-                </div>
-                <!-- Transactions List -->
-                <div class="col-md-7">
-                    <h6 class="m-0 mb-4">Transactions</h6>
-                    <div class="row g-6">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="avatar flex-shrink-0 me-3">
-                                  <div class="avatar-initial bg-success rounded-circle shadow-xs">
-                                    <i class="ri-arrow-down-line"></i>
-                                  </div>
-                                </div>
-                                <div>
-                                  <h6 class="mb-0">Gunroad Account</h6>
-                                  <small class="text-muted">Sell UI Kit</small>
-                                </div>
-                                <div class="ms-auto text-success">+$4,850</div>
-                            </div>
-                            <!-- Add more placeholder transactions -->
-                        </div>
-                        <div class="col-md-6">
-                             <div class="d-flex align-items-center mb-3">
-                                <div class="avatar flex-shrink-0 me-3">
-                                  <div class="avatar-initial bg-danger rounded-circle shadow-xs">
-                                    <i class="ri-arrow-up-line"></i>
-                                  </div>
-                                </div>
-                                <div>
-                                  <h6 class="mb-0">Upgrade Slack Plan</h6>
-                                  <small class="text-muted">Debit Card</small>
-                                </div>
-                                <div class="ms-auto text-danger">-$1870</div>
-                            </div>
-                             <!-- Add more placeholder transactions -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </div>
-  <!--/ All Holdings  -->
-
-  <div class="col-12">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title m-0">All Holdings</h5>
-        </div>
-        <div class="card-body">
-            <div class="row g-6">
-                <!-- Donut Chart -->
-                <div class="col-md-5 d-flex align-items-center">
-                    <div id="all-holdings-donut-chart" class="w-100"></div>
-                </div>
-                <!-- Holdings List -->
-      <div class="table-responsive">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th class="text-truncate">Symbol</th>
-              <th class="text-truncate">Description</th>
-              <th class="text-truncate">Qty</th>
-              <th class="text-truncate">Avg. Price</th>
-              <th class="text-truncate">Current Price</th>
-              <th class="text-truncate">Day Change %</th>
-              <th class="text-truncate">Total Gain %</th>
-              <th class="text-truncate">Mkt Value</th>
-              <th class="text-truncate">Cost Basis</th>
-              <th class="text-truncate">Total Gain/Loss</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Placeholder Rows -->
-            <tr>
-              <td class="text-truncate">AMZN</td>
-              <td class="text-truncate">AMAZON.COM INC</td>
-              <td class="text-truncate">10</td>
-              <td class="text-truncate">$175.00</td>
-              <td class="text-truncate">$185.50</td>
-              <td><span class="badge bg-label-success rounded-pill">+1.25%</span></td>
-              <td><span class="badge bg-label-success rounded-pill">+5.00%</span></td>
-              <td class="text-truncate">$1,855.00</td>
-              <td class="text-truncate">$1,750.00</td>
-              <td class="text-success">+$105.00</td>
-            </tr>
-            <!-- Add more placeholder rows as needed -->
-          </tbody>
-        </table>
-      </div>
-            </div>
-        </div>
-    </div>
-  </div>
-
-{% endblock %}
-
-
-{% block vendor_js %}
-{{ block.super }}
-<script src="{% static 'vendor/libs/apex-charts/apexcharts.js' %}"></script>
-{% endblock vendor_js %}
 
 {% block page_js %}
 {{ block.super }}
-<script src="{% static 'js/dashboards-analytics.js' %}"></script>
 
-{% if show_connection_modal %}
+{# Yodlee FastLink library script #}
+<script src="https://cdn.yodlee.com/fastlink/v4/initialize.js"></script>
+
+{# Yodlee FastLink Launch Script #}
 <script>
+  // Wait until the entire HTML document is loaded and ready
   document.addEventListener('DOMContentLoaded', function () {
-    var connectionModal = new bootstrap.Modal(document.getElementById('connectionModal'));
-    connectionModal.show();
+    // Check if the connect button exists on the page
+    const connectBtn = document.getElementById('connect-account-btn');
+    if (connectBtn) {
+      connectBtn.addEventListener('click', function() {
+        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+        this.disabled = true;
+
+        // Fetch our FastLink token from the backend
+        fetch("{% url 'connection_page:yodlee_launch_fastlink' %}")
+          .then(response => response.json())
+          .then(data => {
+            if (data.fastlink_token) {
+              // Launch Yodlee FastLink
+              window.fastlink.open({
+                fastLinkURL: "https://fl4.sandbox.yodlee.com/authenticate/restserver/fastlink",
+                accessToken: `Bearer ${data.fastlink_token}`,
+                container: 'fastlink-container',
+                params: {
+                  configName: 'Verification'
+                },
+                onSuccess: function (data) {
+                  // After success, tell our server and redirect to the holdings page
+                  fetch("{% url 'connection_page:yodlee_success_callback' %}")
+                    .then(() => window.location.href = "{% url 'holdings:holdings_list' %}");
+                },
+                onError: function (data) {
+                  console.error('FastLink Error:', data);
+                  connectBtn.innerHTML = 'Connect an Account';
+                  connectBtn.disabled = false;
+                },
+                onClose: function (data) {
+                  console.log('FastLink Closed:', data);
+                  connectBtn.innerHTML = 'Connect an Account';
+                  connectBtn.disabled = false;
+                }
+              });
+            } else {
+              alert('Failed to get token: ' + (data.error || 'Unknown error'));
+              connectBtn.innerHTML = 'Connect an Account';
+              connectBtn.disabled = false;
+            }
+          })
+          .catch(error => {
+            console.error('Fetch Error:', error);
+            alert('Could not contact the server. Check the browser console for details.');
+            connectBtn.innerHTML = 'Connect an Account';
+            connectBtn.disabled = false;
+          });
+      });
+    }
   });
 </script>
-{% endif %}
-
-<div class="modal fade" id="connectionModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalCenterTitle">Connect Your Brokerage</h5>
-      </div>
-      <div class="modal-body">
-        <p>Please connect your brokerage account to get started.</p>
-        <div class="d-grid gap-3">
-          <a href="{% url 'connection_page:authenticate' %}" class="btn btn-primary">
-            Connect to Charles Schwab
-          </a>
-          <a href="{% url 'connection_page:etrade_authenticate' %}" class="btn btn-info">
-            Connect to E*TRADE
-          </a>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <a href="{% url 'authentication:auth-logout-basic' %}" class="btn btn-outline-secondary">Logout</a>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock page_js %}
