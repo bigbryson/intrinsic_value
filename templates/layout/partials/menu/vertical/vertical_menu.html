@@ -127,7 +127,58 @@
         </li>
       </ul>
     </li>
+<li class="menu-item {% if request.path == '/' or '/home/' in request.path %}active{% endif %}">
+    <a href="{% url 'index' %}" class="menu-link">
+      <i class="menu-icon tf-icons ri-home-smile-line"></i>
+      <div class="text-truncate" data-i18n="Dashboards">Dashboards</div>
+    </a>
+  </li>
 
+  <li class="menu-header"><span>Main Menu</span></li>
+
+  <li class="menu-item {% if '/holdings/' in request.path %}active{% endif %}">
+    <a href="{% url 'holdings:holdings_list' %}" class="menu-link">
+      <i class="menu-icon tf-icons ri-wallet-line"></i>
+      <div class="text-truncate" data-i18n="Holdings">Holdings</div>
+    </a>
+  </li>
+
+  <li class="menu-item {% if '/transactions/' in request.path %}active{% endif %}">
+    <a href="{% url 'transactions:transactions_list' %}" class="menu-link">
+      <i class="menu-icon tf-icons ri-arrow-left-right-line"></i>
+      <div class="text-truncate" data-i18n="Transactions">Transactions</div>
+    </a>
+  </li>
+
+  <li class="menu-item {% if '/financials/' in request.path %}active{% endif %}">
+    <a href="{% url 'financials:financials_view' %}" class="menu-link">
+      <i class="menu-icon tf-icons ri-file-chart-line"></i>
+      <div class="text-truncate" data-i18n="Financials">Financials</div>
+    </a>
+  </li>
+
+  <li class="menu-item {% if '/grahams-table/' in request.path %}active{% endif %}">
+    <a href="{% url 'grahams_table:grahams_table_list' %}" class="menu-link">
+      <i class="menu-icon tf-icons ri-calculator-line"></i>
+      <div class="text-truncate" data-i18n="Graham's Table">Graham's Table</div>
+    </a>
+  </li>
+
+  <li class="menu-header"><span>Personal Finance</span></li>
+
+  <li class="menu-item {% if '/savings/' in request.path %}active{% endif %}">
+    <a href="{% url 'savings:savings_view' %}" class="menu-link">
+      <i class="menu-icon tf-icons ri-bank-line"></i>
+      <div class="text-truncate" data-i18n="Savings">Savings</div>
+    </a>
+  </li>
+
+  <li class="menu-item {% if '/goals/' in request.path %}active{% endif %}">
+    <a href="{% url 'goals:goals_view' %}" class="menu-link">
+      <i class="menu-icon tf-icons ri-rocket-line"></i>
+      <div class="text-truncate" data-i18n="Goals">Goals</div>
+    </a>
+  </li>
     <li class="menu-item">
       <a href="{% get_theme_variables 'live_preview' %}transactions/list/" class="menu-link" target="_blank">
         <i class="menu-icon tf-icons ri-database-2-line"></i>

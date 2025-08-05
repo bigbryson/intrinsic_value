@@ -2,6 +2,6 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 @login_required
-def financials_view(request):
+def goals_view(request):
     context = {'is_menu': True}
-    return render(request, 'financials/financials_view.html', context)
+    return render(request, 'goals/goals_view.html', context)

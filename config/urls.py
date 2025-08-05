@@ -28,6 +28,18 @@ urlpatterns = [
     path('accounts/', include(('apps.authentication.urls', 'authentication'))),
 
     path('', include('apps.dashboards.urls')),
+
+    path('transactions/', include(('apps.transactions.urls', 'transactions'))),
+
+    path('financials/', include(('apps.financials.urls', 'financials'))),
+
+    path('savings/', include(('apps.savings.urls', 'savings'))),
+
+    path('goals/', include(('apps.goals.urls', 'goals'))),
+
+    path('grahams-table/', include(('apps.grahams_table.urls', 'grahams_table'))),
+
+
     #holdings url
     path('holdings/', include(('apps.holdings.urls', 'holdings'))), # Add this line
 

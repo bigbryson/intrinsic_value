@@ -32,4 +32,26 @@ def get_yodlee_fastlink_token():
     except requests.exceptions.HTTPError as e:
         print(f"Error getting Yodlee FastLink token: {e.response.text}")
         return None
+def get_yodlee_accounts(user_token):
+    """
+    Fetches the accounts linked by a user from the Yodlee API.
+    """
+    if not user_token:
+        return None
 
+    url = f"{settings.YODLEE_API_URL}/accounts"
+    headers = {
+        'Api-Version': '1.1',
+        'Authorization': f'Bearer {user_token}'
+    }
+
+    try:
+        print("Requesting linked accounts from Yodlee...")
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        accounts_data = response.json()
+        print("Successfully received accounts from Yodlee.")
+        return accounts_data.get('account', [])
+    except requests.exceptions.HTTPError as e:
+        print(f"Error getting Yodlee accounts: {e.response.text}")
+        return None

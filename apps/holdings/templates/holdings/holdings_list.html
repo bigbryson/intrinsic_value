@@ -33,7 +33,7 @@
       </thead>
       <tbody class="table-border-bottom-0">
         {% for position in holdings %}
-   
+
             <td><strong>{{ position.instrument.symbol }}</strong></td>
             <td>{{ position.instrument.description|default:position.instrument.symbol }}</td>
             <td>{{ position.longQuantity|floatformat:2 }}</td>

@@ -43,10 +43,10 @@ DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
 
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "2259d2ffd525.ngrok-free.app"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "1b84d4190a2e.ngrok-free.app"]
 
 # Add your ngrok URL to CSRF_TRUSTED_ORIGINS
-CSRF_TRUSTED_ORIGINS = ['https://2259d2ffd525.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://1b84d4190a2e.ngrok-free.app']
 
 # Automatic ngrok URL configuration for development
 # These settings tell Django to trust the X-Forwarded-Proto header from ngrok
@@ -81,6 +81,8 @@ INSTALLED_APPS = [
     "apps.grahams_table",
     "apps.holdings",
     "apps.transactions",
+    "apps.savings",
+    "apps.goals",
     "apps.financials",
     "django_extensions",
     "django_ngrok",

@@ -5,7 +5,7 @@ from django.conf import settings
 import requests
 import json
 from apps.connection_page.models import SchwabToken
-
+## below is the schwab holdings api
 @login_required
 def holdings_list(request):
     holdings = []
@@ -50,3 +50,30 @@ def holdings_list(request):
         'is_menu': True,
     }
     return render(request, 'holdings/holdings_list.html', context)
+
+## below is the yodlee holdings api
+
+# @login_required
+# def holdings_list(request):
+#     accounts = []
+#     error_message = None
+
+#     try:
+#         # Get a token for the sandbox user to make API calls
+#         user_token = yodlee_service.get_yodlee_fastlink_token()
+#         if user_token:
+#             # Use the token to get the list of linked accounts
+#             accounts = yodlee_service.get_yodlee_accounts(user_token)
+#         else:
+#             error_message = "Could not get a token to fetch Yodlee accounts."
+
+#     except Exception as e:
+#         error_message = f"An unexpected error occurred: {e}"
+#         print(f"An error occurred in holdings_list: {e}")
+
+#     context = {
+#         'accounts': accounts, # We are now passing 'accounts'
+#         'error_message': error_message,
+#         'is_menu': True,
+#     }
+#     return render(request, 'holdings/holdings_list.html', context)
