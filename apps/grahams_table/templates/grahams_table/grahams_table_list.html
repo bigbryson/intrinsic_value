@@ -1,74 +1,43 @@
-{% extends 'layout/layout_vertical.html' %}
-{% load static %}
+{% extends "layout/layout_vertical.html" %}
+{% load static i18n %}
+{% load grahams_table_extras %}
 
-{% block title %}{% translate "Stock Screener" %}{% endblock %}
+{% block title %}Graham's Table{% endblock %}
 
 {% block content %}
-{# This 'content' block name must match the one in layout_vertical.html #}
-<div class="container-xxl flex-grow-1 container-p-y">
-
-    <div class="row mb-4 align-items-center">
-        <div class="col-md-6">
-            <form method="get" class="d-flex">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="q" value="{{ search_query|default:'' }}" placeholder="Search by Symbol...">
-                    <button class="btn btn-outline-primary" type="submit">{% translate "Search" %}</button>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-6 text-md-end mt-2 mt-md-0">
-            {% if total_results is not None %}
-            <small class="text-muted">
-                {% blocktranslate trimmed %}
-                    Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ total_results }} stocks found.
-                {% endblocktranslate %}
-            </small>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="card">
-        <h5 class="card-header">{% translate "Stock Screener Results" %}</h5>
-        <div class="table-responsive text-nowrap">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        {% for header in table_headers %}
-                            <th>{% translate header %}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody class="table-border-bottom-0">
-                    {% for stock_item in stocks_list %}
-                        <tr>
-                            {% for header_key in table_headers %}
-                                <td>
-                                {% if header_key == "Symbol" %}
-                                    <a href="{% url 'grahams_table/grahams_table_list.html' stock_item|get_item:'Symbol' %}">
-                                        <strong>{{ stock_item|get_item:header_key }}</strong>
-                                    </a>
-                                {% else %}
-                                    {{ stock_item|get_item:header_key|default_if_none:"N/A" }}
-                                {% endif %}
-                                </td>
-                            {% endfor %}
-                        </tr>
-                    {% empty %}
-                        <tr><td colspan="{{ table_headers|length }}" class="text-center py-5">{% translate "No stocks to display." %}</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    {% if page_obj.has_other_pages %}
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ search_query|default:'' }}">&laquo;</a></li>{% endif %}
-            <li class="page-item active"><span class="page-link">{% translate "Page" %} {{ page_obj.number }} {% translate "of" %} {{ page_obj.paginator.num_pages }}</span></li>
-            {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ search_query|default:'' }}">&raquo;</a></li>{% endif %}
-        </ul>
-    </nav>
-    {% endif %}
+<div class="card">
+  <h5 class="card-header">Graham's Intrinsic Value Table</h5>
+  <div class="table-responsive text-nowrap">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          {% for header in table_headers %}
+            <th>{{ header }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        {% for stock_item in stocks_list %}
+          <tr>
+            {# This loop now uses our new get_item filter #}
+            {% for header_key in table_headers %}
+              <td>
+                {% if header_key == "Symbol" %}
+                  {# Corrected url tag syntax #}
+                  <a href="{% url 'grahams_table:stock_detail' stock_item.Symbol %}">
+                    <strong>{{ stock_item|get_item:header_key }}</strong>
+                  </a>
+                {% else %}
+                  {{ stock_item|get_item:header_key|default_if_none:"N/A" }}
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% empty %}
+          <tr><td colspan="{{ table_headers|length }}" class="text-center py-5">{% translate "No stocks to display." %}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock content %}
