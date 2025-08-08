@@ -23,7 +23,7 @@ class LoginView(TemplateView):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                return redirect('connection_page')
 
         context = self.get_context_data(**kwargs)
         context['form'] = form
@@ -45,7 +45,7 @@ class RegisterView(TemplateView):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')
+            return redirect('connection_page')
 
         context = self.get_context_data(**kwargs)
         context['form'] = form

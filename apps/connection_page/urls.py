@@ -1,4 +1,3 @@
-# /apps/connection_page/urls.py
 from django.urls import path
 from . import views
 

@@ -1,281 +1,79 @@
 {% extends "layout/layout_vertical.html" %}
-
 {% load static %}
-{% load i18n %}
 
-{% block title %}Portfolio Dashboard{% endblock title %}
-
-{% block vendor_css %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'vendor/libs/apex-charts/apex-charts.css' %}" />
-{% endblock vendor_css %}
-
-{% block vendor_js %}
-{{ block.super }}
-<script src="{% static 'vendor/libs/apex-charts/apexcharts.js' %}"></script>
-{% endblock vendor_js %}
-
-{% block page_js %}
-{{ block.super }}
-{# You will update this JS file later to power all the charts #}
-<script src="{% static 'js/dashboards-portfolio.js' %}"></script>
-{% endblock page_js %}
+{% block title %}Dashboard{% endblock title %}
 
 {% block content %}
-<div class="row gy-6">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="card-title m-0 me-2">Chart Overview</h5>
-        <div class="dropdown">
-          <button class="btn btn-text-secondary rounded-pill btn-icon" type="button" id="portfolioChartDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ri-more-2-line ri-24px"></i>
-          </button>
-          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="portfolioChartDropdown">
-            <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-            <a class="dropdown-item" href="javascript:void(0);">Share</a>
-          </div>
-        </div>
-      </div>
-    </div>
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">Portfolio /</span> Dashboard
+</h4>
+
+{# This block will only show if the user has NOT connected an account #}
+{% if show_connection_prompt %}
+<div class="card mb-4">
+  <div class="card-body text-center">
+    <h4 class="card-title">Welcome to Your Portfolio!</h4>
+    <p class="card-text">To see your dashboard and holdings, please connect a brokerage account.</p>
+    <a href="{% url 'connection_page' %}" class="btn btn-primary">Connect an Account</a>
   </div>
-<div class="row gy-6">
-  <!-- Main Overview Card -->
-  <div class="col-12">
-      <div class="card">
-          <div class="card-header">
-              <h5 class="card-title m-0">Portfolio Overview</h5>
-          </div>
-          <div class="card-body">
-              <div class="row g-6">
-                  <!-- Left Side: Charts -->
-                  <div class="col-md-7">
-                      <div class="row g-6">
-                          <!-- Invested Overview Chart -->
-                          <div class="col-12">
-                              <div class="card">
-                                  <div class="card-header">
-                                      <h6 class="m-0">Invested</h6>
-                                  </div>
-                                  <div class="card-body">
-                                      <div id="invested-overview-chart"></div>
-                                  </div>
-                              </div>
-                          </div>
-                          <!-- Dividends Overview Chart -->
-                          <div class="col-12">
-                              <div class="card">
-                                  <div class="card-header">
-                                      <h6 class="m-0">Dividends</h6>
-                                  </div>
-                                  <div class="card-body">
-                                      <div id="dividends-overview-chart"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
+</div>
+{% endif %}
 
-                  <!-- Right Side: Key Metrics -->
-                  <div class="col-md-5">
-                      <div class="row g-6">
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <div class="avatar mx-auto mb-2">
-                                          <div class="avatar-initial bg-primary rounded-circle shadow-xs">
-                                              <i class="ri-wallet-3-line ri-24px"></i>
-                                          </div>
-                                      </div>
-                                      <h6 class="mb-1">Invested</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <div class="avatar mx-auto mb-2">
-                                          <div class="avatar-initial bg-success rounded-circle shadow-xs">
-                                              <i class="ri-funds-line ri-24px"></i>
-                                          </div>
-                                      </div>
-                                      <h6 class="mb-1">Market Value</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <div class="avatar mx-auto mb-2">
-                                          <div class="avatar-initial bg-info rounded-circle shadow-xs">
-                                              <i class="ri-safe-2-line ri-24px"></i>
-                                          </div>
-                                      </div>
-                                      <h6 class="mb-1">Free Cash</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <div class="avatar mx-auto mb-2">
-                                          <div class="avatar-initial bg-dark rounded-circle shadow-xs">
-                                              <i class="ri-numbers-line ri-24px"></i>
-                                          </div>
-                                      </div>
-                                      <h6 class="mb-1">Portfolio Value</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <h6 class="mb-1">Dividends</h6>
-                                      <h5 class="mb-0">$$$</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <h6 class="mb-1">Yield %</h6>
-                                      <h5 class="mb-0">%%</h5>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <h6 class="mb-1">Gain/Loss %</h6>
-                                      <h5 class="mb-0">%%</h5>
-                                  </div>
-                              </div>
-                          </div>
-                           <div class="col-sm-3">
-                              <div class="card h-100">
-                                  <div class="card-body text-center">
-                                      <h6 class="mb-1">Monthly Return %</h6>
-                                      <h5 class="mb-0">%%</h5>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-  <!--/ Main Overview Card -->
-
-
-  <!-- All Areas of stocks & Transactions Card -->
-  <div class="col-12">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title m-0">All Transactions</h5>
-        </div>
-        <div class="card-body">
-            <div class="row g-6">
-                <!-- Donut Chart -->
-                <div class="col-md-5 d-flex align-items-center">
-                    <div id="all-holdings-donut-chart" class="w-100"></div>
-                </div>
-                <!-- Transactions List -->
-                <div class="col-md-7">
-                    <h6 class="m-0 mb-4">Transactions</h6>
-                    <div class="row g-6">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="avatar flex-shrink-0 me-3">
-                                  <div class="avatar-initial bg-success rounded-circle shadow-xs">
-                                    <i class="ri-arrow-down-line"></i>
-                                  </div>
-                                </div>
-                                <div>
-                                  <h6 class="mb-0">Gunroad Account</h6>
-                                  <small class="text-muted">Sell UI Kit</small>
-                                </div>
-                                <div class="ms-auto text-success">+$4,850</div>
-                            </div>
-                            <!-- Add more placeholder transactions -->
-                        </div>
-                        <div class="col-md-6">
-                             <div class="d-flex align-items-center mb-3">
-                                <div class="avatar flex-shrink-0 me-3">
-                                  <div class="avatar-initial bg-danger rounded-circle shadow-xs">
-                                    <i class="ri-arrow-up-line"></i>
-                                  </div>
-                                </div>
-                                <div>
-                                  <h6 class="mb-0">Upgrade Slack Plan</h6>
-                                  <small class="text-muted">Debit Card</small>
-                                </div>
-                                <div class="ms-auto text-danger">-$1870</div>
-                            </div>
-                             <!-- Add more placeholder transactions -->
-                        </div>
-                    </div>
-                </div>
+{# This block will only show if the user HAS connected an account #}
+{% if has_brokerage_connection %}
+<div class="row gy-4">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="card-title m-0">Top Gainers (S&P 500)</h5></div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for mover in top_gainers|slice:":5" %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><strong>{{ mover.symbol }}</strong></span>
+                        <span class="text-success">+{{ mover.change|floatformat:2 }}%</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">Could not load data.</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
-  </div>
-  <!--/ All Holdings  -->
-
-  <div class="col-12">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title m-0">All Holdings</h5>
-        </div>
-        <div class="card-body">
-            <div class="row g-6">
-                <!-- Donut Chart -->
-                <div class="col-md-5 d-flex align-items-center">
-                    <div id="all-holdings-donut-chart" class="w-100"></div>
-                </div>
-                <!-- Holdings List -->
-      <div class="table-responsive">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th class="text-truncate">Symbol</th>
-              <th class="text-truncate">Description</th>
-              <th class="text-truncate">Qty</th>
-              <th class="text-truncate">Avg. Price</th>
-              <th class="text-truncate">Current Price</th>
-              <th class="text-truncate">Day Change %</th>
-              <th class="text-truncate">Total Gain %</th>
-              <th class="text-truncate">Mkt Value</th>
-              <th class="text-truncate">Cost Basis</th>
-              <th class="text-truncate">Total Gain/Loss</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Placeholder Rows -->
-            <tr>
-              <td class="text-truncate">AMZN</td>
-              <td class="text-truncate">AMAZON.COM INC</td>
-              <td class="text-truncate">10</td>
-              <td class="text-truncate">$175.00</td>
-              <td class="text-truncate">$185.50</td>
-              <td><span class="badge bg-label-success rounded-pill">+1.25%</span></td>
-              <td><span class="badge bg-label-success rounded-pill">+5.00%</span></td>
-              <td class="text-truncate">$1,855.00</td>
-              <td class="text-truncate">$1,750.00</td>
-              <td class="text-success">+$105.00</td>
-            </tr>
-            <!-- Add more placeholder rows as needed -->
-          </tbody>
-        </table>
-      </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="card-title m-0">Top Losers (S&P 500)</h5></div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for mover in top_losers|slice:":5" %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><strong>{{ mover.symbol }}</strong></span>
+                        <span class="text-danger">{{ mover.change|floatformat:2 }}%</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">Could not load data.</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
-  </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="card-title m-0">Most Active (S&P 500)</h5></div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for mover in most_active|slice:":5" %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><strong>{{ mover.symbol }}</strong></span>
+                        <span>{{ mover.totalVolume|floatformat:0 }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">Could not load data.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
-{% endblock %}
+{% endblock content %}

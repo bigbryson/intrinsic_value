@@ -1,24 +1,26 @@
 {% extends "layout/layout_blank.html" %}
+{% load static %}
 
-{% load i18n %}
-
-{% block title %}Connect Brokerage{% endblock %}
+{% block title %}Connect Account{% endblock %}
 
 {% block content %}
 <div class="authentication-wrapper authentication-basic container-p-y">
   <div class="authentication-inner py-6">
     <div class="card p-7">
-      <div class="card-body">
+      <div class="card-body text-center">
         <h4 class="mb-2">Connect Your Brokerage</h4>
-        <p class="mb-5">Please connect your brokerage account to import your portfolio.</p>
+        <p class="mb-5">Please connect an account to continue to your dashboard.</p>
 
         <div class="d-grid gap-4">
-          <a href="{% url 'connection_page:authenticate' %}" class="btn btn-primary">
+          <a href="{% url 'connection_page:schwab_authenticate' %}" class="btn btn-primary">
             Connect to Charles Schwab
           </a>
           <a href="{% url 'connection_page:etrade_authenticate' %}" class="btn btn-info">
             Connect to E*TRADE
           </a>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'authentication:auth-logout-basic' %}">Logout</a>
         </div>
       </div>
     </div>

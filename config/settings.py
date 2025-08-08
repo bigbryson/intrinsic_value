@@ -44,8 +44,6 @@ DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "1b84d4190a2e.ngrok-free.app"]
-
-# Add your ngrok URL to CSRF_TRUSTED_ORIGINS
 CSRF_TRUSTED_ORIGINS = ['https://1b84d4190a2e.ngrok-free.app']
 
 # Automatic ngrok URL configuration for development
@@ -237,14 +235,12 @@ FINNHUB_API_KEY = 'd1631g9r01qhsocmdas0d1631g9r01qhsocmdasg'
 URL_WEBHOOK_SECRET = 'd1631g9r01qhsocmdatg'
 
 # E*TRADE API Credentials
-ETRADE_CONSUMER_KEY='af085ade91855a0c03acb7a314bc84b7' #your_etrade_api_key''
-ETRADE_CONSUMER_SECRET='80e7b374c7d5eb95d880a34f0e2b44c432748e8c6eab83eb87297fa37ef4c7db' #your_etrade_secret_key''
+ETRADE_CONSUMER_KEY = os.environ.get("ETRADE_CONSUMER_KEY")
+ETRADE_CONSUMER_SECRET = os.environ.get("ETRADE_CONSUMER_SECRET")
 
 # Charles Schwab API Credentials
-SCHWAB_APP_KEY='M1nYoqHUuH8MprFfDM1VlMp22jrbCnAT'
-
-SCHWAB_APP_SECRET='uCBaAkaGQSBWSsCS'
-
+SCHWAB_APP_KEY = os.environ.get("SCHWAB_APP_KEY")
+SCHWAB_APP_SECRET = os.environ.get("SCHWAB_APP_SECRET")
 LOGIN_URL = '/accounts/auth/login/'
 
 #Sandbox Authentication

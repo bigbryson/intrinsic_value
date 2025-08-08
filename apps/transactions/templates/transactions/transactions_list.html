@@ -1,5 +1,140 @@
 {% extends "layout/layout_vertical.html" %}
+
 {% block title %}Transactions{% endblock title %}
+
 {% block content %}
-<div class="card"><h5 class="card-header">Transactions</h5><div class="card-body"><p>This page will show a list of all your transactions.</p></div></div>
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">Account /</span> Transactions
+</h4>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-md-5">
+        <label for="start_date" class="form-label">Start Date</label>
+        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}" min="2021-08-07">
+      </div>
+      <div class="col-md-5">
+        <label for="end_date" class="form-label">End Date</label>
+        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Filter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if error_message %}
+  <div class="alert alert-warning" role="alert">
+    {{ error_message }}
+  </div>
+{% endif %}
+
+<div class="row gy-4">
+
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Trades</h5>
+        <span class="badge bg-label-info">${{ sums_by_cat.trades|floatformat:2 }}</span>
+      </div>
+      <div class="table-responsive text-nowrap" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-hover">
+          <thead><tr><th>Date</th><th>Symbol</th><th>Description</th><th>Amount</th></tr></thead>
+          <tbody>
+            {% for trx in transactions_by_cat.trades %}
+            <tr>
+              <td>{{ trx.transactionDate|date:"Y-m-d" }}</td>
+              <td><strong>{{ trx.transactionItem.instrument.symbol|default:"--" }}</strong></td>
+              <td>{{ trx.description }}</td>
+              <td><strong class="{% if trx.netAmount > 0 %}text-success{% else %}text-danger{% endif %}">${{ trx.netAmount|floatformat:2 }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-center">No trades found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Dividends & Interest</h5>
+            <span class="badge bg-label-success">+${{ sums_by_cat.dividends_and_interest|floatformat:2 }}</span>
+        </div>
+      <div class="table-responsive text-nowrap" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-hover">
+          <thead><tr><th>Date</th><th>Symbol</th><th>Description</th><th>Amount</th></tr></thead>
+          <tbody>
+            {% for trx in transactions_by_cat.dividends_and_interest %}
+            <tr>
+              <td>{{ trx.transactionDate|date:"Y-m-d" }}</td>
+              <td><strong>{{ trx.transactionItem.instrument.symbol|default:"--" }}</strong></td>
+              <td>{{ trx.description }}</td>
+              <td><strong class="text-success">${{ trx.netAmount|floatformat:2 }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-center">No dividends or interest found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Other Activity</h5>
+            <span class="badge {% if sums_by_cat.deposits_and_withdrawals > 0 %}bg-label-success{% else %}bg-label-danger{% endif %}">${{ sums_by_cat.deposits_and_withdrawals|floatformat:2 }}</span>
+        </div>
+      <div class="table-responsive text-nowrap" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-hover">
+            <thead><tr><th>Date</th><th>Description</th><th>Amount</th></tr></thead>
+            <tbody>
+            {% for trx in transactions_by_cat.deposits_and_withdrawals %}
+            <tr>
+              <td>{{ trx.transactionDate|date:"Y-m-d" }}</td>
+              <td>{{ trx.description }}</td>
+              <td><strong class="{% if trx.netAmount > 0 %}text-success{% else %}text-danger{% endif %}">${{ trx.netAmount|floatformat:2 }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-center">No deposits or withdrawals found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Deposits & Withdrawals</h5>
+            <span class="badge bg-label-secondary">${{ sums_by_cat.other|floatformat:2 }}</span>
+        </div>
+      <div class="table-responsive text-nowrap" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-hover">
+            <thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Amount</th></tr></thead>
+            <tbody>
+            {% for trx in transactions_by_cat.other %}
+            <tr>
+              <td>{{ trx.transactionDate|date:"Y-m-d" }}</td>
+              <td><span class="badge bg-label-secondary">{{ trx.type|title }}</span></td>
+              <td>{{ trx.description }}</td>
+              <td><strong class="{% if trx.netAmount > 0 %}text-success{% else %}text-danger{% endif %}">${{ trx.netAmount|floatformat:2 }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-center">No other activity found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
 {% endblock content %}

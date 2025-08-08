@@ -1,4 +1,3 @@
-# /apps/connection_page/views.py
 from django.shortcuts import redirect, render
 from django.conf import settings
 from django.urls import reverse
@@ -7,32 +6,31 @@ from .models import SchwabToken
 import urllib.parse
 import requests
 import base64
-
-# E*TRADE imports
 from oauthlib.oauth1.rfc5849 import SIGNATURE_HMAC, SIGNATURE_TYPE_AUTH_HEADER
 from requests_oauthlib import OAuth1Session
 
+
 @login_required
 def schwab_authenticate(request):
-    """
-    Builds the authorization URL and redirects the user to Schwab.
-    """
     auth_url = 'https://api.schwabapi.com/v1/oauth/authorize'
+    # This dynamically builds the URL that MUST match the portal
+    redirect_uri = request.build_absolute_uri(reverse('connection_page:schwab_callback'))
     params = {
         'client_id': settings.SCHWAB_APP_KEY,
-        'redirect_uri': request.build_absolute_uri(reverse('connection_page:schwab_callback'))
+        'redirect_uri': redirect_uri
     }
+    print(f"Redirecting to Schwab with callback: {redirect_uri}") # For debugging
     return redirect(f'{auth_url}?{urllib.parse.urlencode(params)}')
 
 @login_required
 def schwab_callback(request):
-    """
-    Handles the callback from Schwab, exchanges the code for a token,
-    and saves it to the database for the logged-in user.
-    """
     auth_code = request.GET.get('code')
     if not auth_code:
         return render(request, 'error.html', {'error': 'Schwab authorization code not found.'})
+
+    # This also dynamically builds the URL that MUST match the portal
+    redirect_uri = request.build_absolute_uri(reverse('connection_page:schwab_callback'))
+    print(f"Handling Schwab callback with redirect_uri: {redirect_uri}") # For debugging
 
     try:
         token_url = 'https://api.schwabapi.com/v1/oauth/token'
@@ -45,7 +43,7 @@ def schwab_callback(request):
         data = {
             'grant_type': 'authorization_code',
             'code': auth_code,
-            'redirect_uri': request.build_absolute_uri(reverse('connection_page:schwab_callback'))
+            'redirect_uri': redirect_uri
         }
         response = requests.post(token_url, headers=headers, data=data)
         response.raise_for_status()
@@ -63,18 +61,20 @@ def schwab_callback(request):
         return redirect('holdings:holdings_list')
     except Exception as e:
         print(f"Error during Schwab token exchange: {e}")
+        if hasattr(e, 'response'):
+            print(f"Response Body: {e.response.text}")
         return render(request, 'error.html', {'error': 'Failed to retrieve Schwab tokens.'})
 
-# --- E*TRADE Views ---
+# ... (E*TRADE views remain the same) ...
+
 @login_required
 def etrade_authenticate(request):
-    # This logic remains the same
     request_token_url = 'https://api.etrade.com/oauth/request_token'
     authorize_url = 'https://us.etrade.com/e/t/etws/authorize'
     oauth = OAuth1Session(
         client_key=settings.ETRADE_CONSUMER_KEY,
         client_secret=settings.ETRADE_CONSUMER_SECRET,
-        callback_uri="oob", # Using "oob" for out-of-band authentication
+        callback_uri="oob",
         signature_method=SIGNATURE_HMAC,
         signature_type=SIGNATURE_TYPE_AUTH_HEADER,
     )
@@ -89,7 +89,6 @@ def etrade_authenticate(request):
 
 @login_required
 def etrade_callback(request):
-    # This logic also remains the same
     access_token_url = 'https://api.etrade.com/oauth/access_token'
     oauth_verifier = request.GET.get('oauth_verifier')
     if not oauth_verifier:
